@@ -43,4 +43,5 @@ Important:
 - key_terms must be an array of objects.
 - Every key term must include both term and meaning.
 - Do not return lists where strings or objects are expected.
+- Always Return Valid Json MAtching With Response Schema
 """

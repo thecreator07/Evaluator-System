@@ -23,7 +23,6 @@ class CriterionCheck(BaseModel):
     status: Literal["PASS", "FAIL"]
     reason: str
 
-
 class EvaluatorResponse(BaseModel):
     checks: list[CriterionCheck]
     regeneration_instructions: list[str]
@@ -33,7 +32,7 @@ class RejectionRecord(BaseModel):
     attempt: int
     failed_criteria: list[str]
     reasons: list[str]
-    regeneration_instructions: list[str]
+    regeneration_instructions: list[str] = Field(default_factory=list)
 
 
 class EvaluationState(BaseModel):
@@ -44,3 +43,5 @@ class EvaluationState(BaseModel):
     attempt: int = 1
     max_retries: int = 2
     final_status: Literal["PASS", "FAIL"] | None = None
+    human_decision: dict | None = None
+    candidate_rules: list[dict] = Field(default_factory=list)

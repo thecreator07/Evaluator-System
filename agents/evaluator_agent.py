@@ -1,30 +1,24 @@
-import json
-
 from langchain_core.messages import HumanMessage, SystemMessage
-
+from models.models import EvaluatorResponse, Lesson
 from prompts.evaluator_system_prompt import EVALUATOR_SYSTEM_PROMPT
-from models.models import Lesson,EvaluatorResponse
 from services.llm import get_llm
 
 
+def evaluate_lesson(
+    lesson: Lesson,
+    extra_rules: list[str] | None = None,
+) -> EvaluatorResponse:
+    """Evaluate a lesson against the full rubric plus any human-curated rules."""
 
+    request = f"Evaluate the following lesson.\n\n{lesson.model_dump_json(indent=2)}"
+    if extra_rules:
+        rules = "\n".join(f"- {rule}" for rule in extra_rules)
+        request += (
+            "\n\nAlso apply these additional, human-curated rules for this topic:\n"
+            f"{rules}"
+        )
 
-def evaluate_lesson(data:Lesson) -> EvaluatorResponse:
-    """Evaluate a lesson against the complete rubric."""
-
-    llm = get_llm()
-
-
-    evaluation_request = f"""
-Evaluate the following lesson.
-{data}
-"""
-
-    messages = [
-        SystemMessage(content=EVALUATOR_SYSTEM_PROMPT),
-        HumanMessage(content=evaluation_request),
-    ]
-
-
-    response = llm.invoke(messages)
-    return response
+    llm = get_llm().with_structured_output(EvaluatorResponse)
+    return llm.invoke(
+        [SystemMessage(content=EVALUATOR_SYSTEM_PROMPT), HumanMessage(content=request)]
+    )

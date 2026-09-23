@@ -7,9 +7,9 @@ def get_llm() -> ChatOllama:
     return ChatOllama(
         model=settings.ollama_model,
         base_url=settings.ollama_base_url,
-        temperature=0.2,
+        temperature=0.4,
         keep_alive="5m",
-        num_ctx=8192,
+        num_ctx=16384,
         num_gpu=99,
-        num_predict=1500,
+        # num_predict=1500,
     )

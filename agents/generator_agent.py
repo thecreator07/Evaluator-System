@@ -1,53 +1,53 @@
 from langchain_core.messages import HumanMessage, SystemMessage
 from models.models import Lesson
-from services.llm import get_llm
 from prompts.generator_system_prompt import GENERATOR_SYSTEM_PROMPT
+from services.llm import get_llm
 
-def generate_lesson(
-    topic: str = "Introduction to RAG",
-    feedback: list[str] | None = None,
-    attempt_number: int = 1,
-) -> Lesson:
-    """
-    Generate a lesson.
 
-    On retry, feedback contains instructions from the evaluator.
-    """
+def _bullets(items: list[str]) -> str:
+    return "\n".join(f"- {item}" for item in items)
 
-    llm = get_llm()
+def _build_user_prompt(
+    topic: str,
+    feedback: list[str],
+    failed_criteria: list[str],
+    learned_rules: list[str],
+) -> str:
+    sections = [f"Create a complete beginner-friendly lesson about:\n\n{topic}"]
 
-    feedback_text = ""
+    if learned_rules:
+        sections.append(
+            "Standing rules for this topic - apply on every attempt:\n"
+            + _bullets(learned_rules)
+        )
 
     if feedback:
-        feedback_text = f"""
-The previous lesson failed evaluation.
+        criteria = f" in criteria {', '.join(failed_criteria)}" if failed_criteria else ""
+        sections.append(
+            "The previous lesson failed evaluation.\n\n"
+            f"Fix the following issues{criteria}:\n{_bullets(feedback)}\n\n"
+            "You must correct every issue in the new lesson."
+        )
 
-Fix the following issues:
-{chr(10).join(f"- {item}" for item in feedback)}
+    sections.append("Return only the lesson content.")
+    return "\n\n".join(sections)
 
-You must correct every issue in the new lesson.
-"""
 
-    user_prompt = f"""
-Create a complete beginner-friendly lesson about:
+def generate_lesson(
+    topic: str,
+    feedback: list[str] | None = None,
+    failed_criteria: list[str] | None = None,
+    learned_rules: list[str] | None = None,
+) -> Lesson:
+    """Generate a lesson. On retry, `feedback` carries the evaluator's instructions."""
 
-{topic}
-
-{feedback_text}
-also the attemp is {attempt_number}.it should less than and equal to 2
-Return only the lesson content.
-"""
-
-    messages = [
-        SystemMessage(content=GENERATOR_SYSTEM_PROMPT),
-        HumanMessage(content=user_prompt),
-    ]
-
-    response = llm.invoke(messages)
-    return response
-    # return Lesson(
-    #     topic=topic,
-    #     title="Introduction to Retrieval-Augmented Generation",
-    #     content=response.content,
-    #     attempt_number=attempt_number,
-    # )
+    prompt = _build_user_prompt(
+        topic,
+        feedback or [],
+        failed_criteria or [],
+        learned_rules or [],
+    )
+    llm = get_llm().with_structured_output(Lesson)
+    return llm.invoke(
+        [SystemMessage(content=GENERATOR_SYSTEM_PROMPT), HumanMessage(content=prompt)]
+    )

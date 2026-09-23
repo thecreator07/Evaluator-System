@@ -52,9 +52,8 @@ RESPONSE SCHEMA:
 }}
 
 important:
-The application will calculate the overall result:
-- PASS only when every criterion passes.
-- FAIL when at least one criterion fails.
 - regeneration_instructions must be array of string
 - checks must be array of objects
+- never repeat criterian_id more than one
+- Always Return Valid Json MAtching With Response Schema
 """
