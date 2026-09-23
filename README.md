@@ -113,8 +113,7 @@ docker run -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
 Start Langfuse locally with Docker Compose:
  
 ```bash
-git clone https://github.com/langfuse/langfuse.git
-cd langfuse && docker compose up -d
+docker compose -f docker-compose-langfuse.yml
 ```
  
 MongoDB defaults to Atlas, but a local container works fine for dev too: `docker run -p 27017:27017 mongo`.
