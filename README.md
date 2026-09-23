@@ -31,8 +31,6 @@ flowchart TD
 
 Dashed edges out of `evaluate` are the conditional routing (`success` / `retry` / `fail`); solid edges are direct, unconditional transitions — matching how LangGraph itself distinguishes `add_conditional_edges` from `add_edge`.
 
-> Assumption: on a pass, `evaluate` exports the lesson PDF and routes straight to `__end__` — there's no separate success-export node in the compiled graph. Flag it if that's not right.
-
 Every run is traced end-to-end in Langfuse. State is checkpointed to MongoDB, so a run can pause at the `human_review` `interrupt()` and resume exactly where it left off.
 
 ## Tech stack
@@ -120,27 +118,6 @@ python main.py --topic "Introduction to RAG" --user-id <user-id>
 ```
 
 `--user-id` sets the LangGraph `thread_id`, so multiple users get separate, resumable checkpoints. When `human_review` hits its `interrupt()`, the terminal prompts for approve/edit/reject on each draft rule.
-
-## Project structure
-
-```
-.
-├── main.py              # entrypoint — builds and invokes the graph
-├── settings.py            # env-only config, no hardcoded secrets
-├── lesson_schema.py        # Lesson, EvaluationResult, RejectionRecord (pydantic)
-├── graph/
-│   ├── nodes.py             # generate, evaluate, increment_attempt, ...
-│   └── build.py              # compiles the LangGraph StateGraph
-├── memory/
-│   ├── qdrant_client.py      # generation / evaluation rule collections
-│   └── mongo_client.py       # run log + LangGraph checkpointer
-├── export/
-│   └── pdf.py                # lesson / failed-lesson / rejection-log PDF export
-├── requirements.txt
-└── README.md
-```
-
-> This structure and the run command are a reasonable proposed layout, not read from your actual repo — rename or restructure to match what you've actually built.
 
 ## Limitations
 
