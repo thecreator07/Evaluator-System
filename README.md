@@ -1,6 +1,6 @@
 # Lesson Generation & Evaluation Pipeline
 
-A LangGraph workflow that generates a lesson, evaluates it against a rubric, and gets smarter with every run - each repeated failure becomes a human-approved rule for future runs. The example lesson here covers an introduction to RAG (retrieval-augmented generation).
+A LangGraph workflow that generates a lesson, evaluates it against a rubric, and gets smarter with every run - each repeated failure becomes a human-approved rule for future runs.
 
 ## Why this exists
 
@@ -29,7 +29,7 @@ flowchart TD
     class END endNode;
 ```
 
-Dashed edges out of `evaluate` are the conditional routing (`success` / `retry` / `fail`); solid edges are direct, unconditional transitions — matching how LangGraph itself distinguishes `add_conditional_edges` from `add_edge`.
+Dashed edges out of `evaluate` are the conditional routing (`success` / `retry` / `fail`); solid edges are direct, unconditional transitions - matching how LangGraph itself distinguishes `add_conditional_edges` from `add_edge`.
 
 Every run is traced end-to-end in Langfuse. State is checkpointed to MongoDB, so a run can pause at the `human_review` `interrupt()` and resume exactly where it left off.
 
@@ -75,7 +75,7 @@ The full rejection log for the run is exported to PDF as the last step before `_
 
 ### Threads and checkpointing
 
-Each user gets their own `thread_id`, so the MongoDB checkpointer keeps separate, resumable state per user — including across the `interrupt()` pause.
+Each user gets their own `thread_id`, so the MongoDB checkpointer keeps separate, resumable state per user - including across the `interrupt()` pause.
 
 ## Getting started
  
@@ -145,7 +145,7 @@ python main.py --topic "Introduction to RAG" --user-id <user-id>
 ## Limitations
 
 - The retry budget is capped at 1–2 by design, so a persistent failure falls through to human review rather than looping indefinitely.
-- Rule quality depends on the human reviewer — a bad approval can propagate into future generations until someone corrects it.
+- Rule quality depends on the human reviewer - a bad approval can propagate into future generations until someone corrects it.
 - There's no automated test suite yet; validation currently happens by running the pipeline end-to-end.
 
 ## Contributing
