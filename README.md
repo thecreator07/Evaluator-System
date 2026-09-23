@@ -1,6 +1,6 @@
 # Lesson Generation & Evaluation Pipeline
 
-A LangGraph workflow that generates a lesson, evaluates it against a rubric, and gets smarter with every run — each repeated failure becomes a human-approved rule for future runs. The example lesson here covers an introduction to RAG (retrieval-augmented generation).
+A LangGraph workflow that generates a lesson, evaluates it against a rubric, and gets smarter with every run - each repeated failure becomes a human-approved rule for future runs. The example lesson here covers an introduction to RAG (retrieval-augmented generation).
 
 ## Why this exists
 
@@ -152,11 +152,3 @@ python main.py --topic "Introduction to RAG" --user-id <user-id>
 ## Contributing
 
 This started as a solo project rather than a maintained open-source repo, so there's no formal process yet. Issues and PRs are welcome if you find it useful.
-
-## License
-
-No license is set yet — add one here (MIT is a common default for a project like this) before treating the repo as reusable.
-
----
-
-*README complete: overview, architecture, workflow, setup, structure, limitations, contributing, license. Let me know if anything needs trimming or expanding.*
