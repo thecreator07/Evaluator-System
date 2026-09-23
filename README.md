@@ -78,27 +78,51 @@ The full rejection log for the run is exported to PDF as the last step before `_
 Each user gets their own `thread_id`, so the MongoDB checkpointer keeps separate, resumable state per user — including across the `interrupt()` pause.
 
 ## Getting started
-
+ 
 ### Prerequisites
-
+ 
 - Python 3.11+
 - Ollama running locally with a chat model pulled, plus `nomic-embed-text` for embeddings
 - A reachable Qdrant instance and a MongoDB Atlas connection string
 - A local Langfuse instance for tracing
-
 ### Install
-
+ 
 ```bash
 git clone <repo-url>
 cd <repo-name>
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```
-
+ 
+### Run local services
+ 
+Pull and serve the models Ollama needs:
+ 
+```bash
+ollama pull llama3
+ollama pull nomic-embed-text
+ollama serve
+```
+ 
+Start Qdrant with Docker:
+ 
+```bash
+docker run -p 6333:6333 -v qdrant_storage:/qdrant/storage qdrant/qdrant
+```
+ 
+Start Langfuse locally with Docker Compose:
+ 
+```bash
+git clone https://github.com/langfuse/langfuse.git
+cd langfuse && docker compose up -d
+```
+ 
+MongoDB defaults to Atlas, but a local container works fine for dev too: `docker run -p 27017:27017 mongo`.
+ 
 ### Configure
-
+ 
 Copy `.env.example` to `.env` and fill in the values below. `settings.py` reads only from the environment, so nothing production-specific is hardcoded.
-
+ 
 ```
 OLLAMA_BASE_URL=
 OLLAMA_MODEL=
@@ -110,9 +134,9 @@ LANGFUSE_PUBLIC_KEY=
 LANGFUSE_SECRET_KEY=
 MAX_RETRIES=2
 ```
-
+ 
 ### Run
-
+ 
 ```bash
 python main.py --topic "Introduction to RAG" --user-id <user-id>
 ```
