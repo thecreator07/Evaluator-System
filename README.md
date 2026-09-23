@@ -1,6 +1,11 @@
 # Lesson Generation & Evaluation Pipeline
 
-A LangGraph workflow that generates a lesson, evaluates it against a rubric, and gets smarter with every run - each repeated failure becomes a human-approved rule for future runs.
+A LangGraph pipeline that generates a lesson on a given topic, evaluates it against a rubric, and retries on failure - with a human-approved rule memory that makes every later run smarter. 
+
+- Structured generation and evaluation via Pydantic schemas
+- Automatic retries with targeted feedback from the last failure
+- Human-in-the-loop rule approval, embedded and stored in Qdrant for reuse
+- Full run tracing in Langfuse, with resumable state via a MongoDB checkpointer
 
 ## Why this exists
 
